@@ -1,13 +1,15 @@
 import { Hono } from "hono";
+import { ID, Query } from "node-appwrite";
 import { zValidator } from "@hono/zod-validator";
 
-import { sessionMiddleware } from "@/lib/session-middleware";
-
-import { createWorkspaceSchema } from "../schemas";
-import { DATABASE_ID, IMAGE_BUCKET_ID, MEMBERS_ID, WORKSPACE_ID } from "@/config";
-import { ID, Query } from "node-appwrite";
+import { getMember } from "@/features/members/utils";
 import { MemberRole } from "@/features/members/types";
+
 import { generateInviteCode } from "@/lib/utils";
+import { sessionMiddleware } from "@/lib/session-middleware";
+import { DATABASE_ID, IMAGE_BUCKET_ID, MEMBERS_ID, WORKSPACE_ID } from "@/config";
+
+import { createWorkspaceSchema, updateWorkspaceSchema } from "../schemas";
 
 // Create a Hono app for workspace-related API endpoints
 const app = new Hono()
@@ -125,6 +127,61 @@ const app = new Hono()
       // Return the created workspace data
       return c.json({
         data: workspace,
+      });
+    }
+  )
+  .patch(
+    "/:workspaceId",
+    sessionMiddleware,
+    zValidator("form", updateWorkspaceSchema),
+    async (c) => {
+      const databases = c.get("database");
+      const storage = c.get("storage");
+      const user = c.get("user");
+
+      const { workspaceId } = c.req.param();
+      const { name, image } = c.req.valid("form");
+
+      const member = await getMember({
+        databases,
+        workspaceId,
+        userId: user.$id,
+      });
+
+      if (!member || member.role !== MemberRole.ADMIN) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      let uploadedImageUrl: string | undefined;
+
+      // If user uploaded an image file
+      if (image instanceof File) {
+        // Upload the file to Appwrite storage bucket
+        const file = await storage.createFile(
+          IMAGE_BUCKET_ID,
+          ID.unique(), // Generate unique file ID
+          image
+        );
+
+        // Create a URL that points to our file serving endpoint
+        // This URL will work because it goes through our authenticated API
+        uploadedImageUrl = `/api/workspaces/file/${file.$id}`;
+      } else {
+        uploadedImageUrl = image;
+      }
+
+      const workspace = await databases.updateDocument(
+        DATABASE_ID,
+        WORKSPACE_ID,
+        workspaceId,
+        {
+          name,
+          imageUrl: uploadedImageUrl,
+        }
+      )
+
+      return c.json({
+        data: workspace
       });
     }
   );
