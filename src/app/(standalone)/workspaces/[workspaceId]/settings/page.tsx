@@ -14,7 +14,7 @@ const WorkspaceSettingsPage = async ({
     params,
 }: WorkspaceIdSettingsPageProps) => {
     const user = await getCurrent();
-    if (!user) redirect("/sign-in");
+    if (!user) redirect("/signin");
 
     const initialValues = await getWorkspace({
         workspaceId: params.workspaceId,

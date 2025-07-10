@@ -1,20 +1,33 @@
 import "server-only";
 
-import { Client, Account, Storage } from "node-appwrite";
+import { Client, Account, Databases } from "node-appwrite";
+
 import { APPWRITE_ENDPOINT, APPWRITE_PROJECT_ID } from "@/config";
+import { cookies } from "next/headers";
+import { AUTH_COOKIE } from "@/features/auth/constants";
 
-const client = new Client()
-  .setEndpoint(APPWRITE_ENDPOINT)
-  .setProject(APPWRITE_PROJECT_ID);
+export async function createSessionClient() {
+  const client = new Client()
+    .setEndpoint(APPWRITE_ENDPOINT)
+    .setProject(APPWRITE_PROJECT_ID)
+  
+  const session = (await cookies()).get(AUTH_COOKIE)
+  
+  if (!session || !session.value) {
+    throw new Error("Unauthorized");
+  }
 
-export const storage = new Storage(client);
+  client.setSession(session.value);
 
-export function getAuthenticatedFileUrl(
-  fileId: string,
-  bucketId: string
-): string {
-  return `${APPWRITE_ENDPOINT}/storage/buckets/${bucketId}/files/${fileId}/view?project=${APPWRITE_PROJECT_ID}`;
-}
+  return {
+    get account() {
+      return new Account(client);
+    },
+    get database() {
+      return new Databases(client);
+    }
+  };
+};
 
 export async function createAdminClient() {
   const client = new Client()
