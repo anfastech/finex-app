@@ -1,19 +1,30 @@
 import "server-only";
 
-import { 
-    Client,
-    Account,
- } from "node-appwrite";
+import { Client, Account, Storage } from "node-appwrite";
+import { APPWRITE_ENDPOINT, APPWRITE_PROJECT_ID } from "@/config";
 
- export async function createAdminClient() {
-    const client = new Client()
-        .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
-        .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
-        .setKey(process.env.NEXT_APPWRITE_KEY!)
+const client = new Client()
+  .setEndpoint(APPWRITE_ENDPOINT)
+  .setProject(APPWRITE_PROJECT_ID);
 
-    return {
-        get account() {
-            return new Account(client)
-        }
-    };
- };
+export const storage = new Storage(client);
+
+export function getAuthenticatedFileUrl(
+  fileId: string,
+  bucketId: string
+): string {
+  return `${APPWRITE_ENDPOINT}/storage/buckets/${bucketId}/files/${fileId}/view?project=${APPWRITE_PROJECT_ID}`;
+}
+
+export async function createAdminClient() {
+  const client = new Client()
+    .setEndpoint(APPWRITE_ENDPOINT)
+    .setProject(APPWRITE_PROJECT_ID)
+    .setKey(process.env.NEXT_APPWRITE_KEY!);
+
+  return {
+    get account() {
+      return new Account(client);
+    },
+  };
+}
