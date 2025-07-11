@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 
 import { getCurrent } from "@/features/auth/queries";
-import { EditWorkspaceForm } from "@/features/workspaces/components/edit-workspace-form";
 import { getWorkspace } from "@/features/workspaces/queries";
+import { EditWorkspaceForm } from "@/features/workspaces/components/edit-workspace-form";
 
 interface WorkspaceIdSettingsPageProps {
     params: {

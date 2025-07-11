@@ -1,6 +1,7 @@
-import { UserBtn } from "@/features/auth/components/UserBtn";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
+
+import { UserBtn } from "@/features/auth/components/UserBtn";
 
 interface StandaloneLayoutProps {
   children: React.ReactNode;
