@@ -2,16 +2,17 @@ import "server-only";
 
 import { Client, Account, Databases } from "node-appwrite";
 
-import { APPWRITE_ENDPOINT, APPWRITE_PROJECT_ID } from "@/config";
 import { cookies } from "next/headers";
 import { AUTH_COOKIE } from "@/features/auth/constants";
+
+import { APPWRITE_ENDPOINT, APPWRITE_PROJECT_ID } from "@/config";
 
 export async function createSessionClient() {
   const client = new Client()
     .setEndpoint(APPWRITE_ENDPOINT)
-    .setProject(APPWRITE_PROJECT_ID)
+    .setProject(APPWRITE_PROJECT_ID);
   
-  const session = (await cookies()).get(AUTH_COOKIE)
+  const session = (await cookies()).get(AUTH_COOKIE);
   
   if (!session || !session.value) {
     throw new Error("Unauthorized");
