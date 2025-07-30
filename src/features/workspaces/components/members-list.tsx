@@ -22,7 +22,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 
 export const MembersList = () => {
   const workspaceId = useWorkspaceId();
@@ -50,11 +50,7 @@ export const MembersList = () => {
     const ok = await confirm();
     if (!ok) return;
 
-    deleteMember({ param: { memberId } }, {
-        onSuccess: () => {
-            window.location.reload();
-        }
-    });
+    deleteMember({ param: { memberId } });
   };
 
   return (
