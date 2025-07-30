@@ -76,4 +76,5 @@ export const useConfirm = (
   return [ ConfirmationDailog, confirm ];
 };
 
+
 export default useConfirm;
