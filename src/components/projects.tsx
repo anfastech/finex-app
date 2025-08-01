@@ -8,12 +8,14 @@ import { cn } from "@/lib/utils";
 
 import { useGetProjects } from "@/features/projects/api/use-get-projects";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { ProjectAvatar } from "@/features/projects/components/project-avatar";
+import { useCreateProjectModel } from "@/features/projects/hooks/use-create-project-modal";
 
 
 export const Projects = () => {
-    const projectId = null; // TODO: Use the useProjectId hook
 
     const pathname = usePathname();
+    const { open } = useCreateProjectModel();
     const workspaceId = useWorkspaceId();
     const { data } = useGetProjects({
         workspaceId,
@@ -23,10 +25,10 @@ export const Projects = () => {
         <div className="flex flex-col gap-y-2">
             <div className="flex items-center justify-between">
                 <p className="text-xs uppercase text-neutral-500">Projects</p>
-                <RiAddCircleFill onClick={() => {}} className="size-5 text-neutral-500 cursor-pointer hover:opacity-75 transition"/>
+                <RiAddCircleFill onClick={open} className="size-5 text-neutral-500 cursor-pointer hover:opacity-75 transition"/>
             </div>
             {data?.documents.map((project) => {
-                const href = `/workspaces/${workspaceId}/projects/${projectId}`;
+                const href = `/workspaces/${workspaceId}/projects/${project.$id}`;
                 const isActive = pathname === href;
 
                 return (
@@ -37,6 +39,7 @@ export const Projects = () => {
                                 isActive && "bg-white shadow-sm hover:opacity-100 text-primary"
                             )}
                         >
+                            <ProjectAvatar className="size-6" image={project.imageUrl} name={project.name} />
                             <span className="truncate">{project.name}</span>
                         </div>
                     </Link>
