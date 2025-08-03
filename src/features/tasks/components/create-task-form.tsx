@@ -8,8 +8,14 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { cn } from "@/lib/utils";
+import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
 
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { DottedSeparator } from "@/components/dotted-separator";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -18,35 +24,29 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { DottedSeparator } from "@/components/dotted-separator";
-import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { createProjectSchema } from "../schemas";
-import { useCreateProject } from "../api/use-create-project";
+import { createTaskSchema } from "../schemas";
+import { useCreateTask } from "../api/use-create-task";
 
-interface CreateProjectFormProps {
+interface CreateTaskFormProps {
   onCancel?: () => void;
 }
 
-export const CreateProjectForm = ({ onCancel }: CreateProjectFormProps) => {
+export const CreateTaskForm = ({ onCancel }: CreateTaskFormProps) => {
   const workspaceId = useWorkspaceId();
   const router = useRouter();
-  const { mutate, isPending } = useCreateProject();
+  const { mutate, isPending } = useCreateTask();
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null); 
 
-  const form = useForm<z.infer<typeof createProjectSchema>>({
-    resolver: zodResolver(createProjectSchema),
+  const form = useForm<z.infer<typeof createTaskSchema>>({
+    resolver: zodResolver(createTaskSchema),
     defaultValues: {
       name: "",
     },
   });
 
-  const onSubmit = (values: z.infer<typeof createProjectSchema>) => {
+  const onSubmit = (values: z.infer<typeof createTaskSchema>) => {
     const finalValues = {
       ...values,
       workspaceId,

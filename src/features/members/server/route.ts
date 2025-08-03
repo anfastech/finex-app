@@ -7,7 +7,7 @@ import { createAdminClient } from '@/lib/appwrite';
 import { getMember } from '../utils';
 import { DATABASE_ID, MEMBERS_ID } from '@/config';
 import { Query } from 'node-appwrite';
-import { id } from 'zod/v4/locales';
+// import { id } from 'zod/v4/locales';
 import { MemberRole } from '../types';
 
 const app = new Hono()
