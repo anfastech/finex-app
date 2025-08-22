@@ -5,13 +5,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useGetMembers } from "@/features/members/api/use-get-members";
 import { useGetProjects } from "@/features/projects/api/use-get-projects";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
+import { CreateTaskForm } from "./create-task-form";
 
 interface CreateTaskFormWrapperProps {
     onCancel: () => void;
 };
 
 export const CreateTaskFormWrapper = ({
-    oncancel
+    onCancel
 }: CreateTaskFormWrapperProps) => {
     const workspaceId = useWorkspaceId();
 
@@ -42,9 +43,10 @@ export const CreateTaskFormWrapper = ({
     }
 
     return (
-        <div>
-            {JSON.stringify(projectOptions)}
-            {JSON.stringify(memberOptions)}
-        </div>
+        <CreateTaskForm
+            onCancel={onCancel}
+            projectOptions={projectOptions ?? []}
+            memberOptions={memberOptions ?? []}
+        />
     );
 };
