@@ -91,7 +91,7 @@ export const TaskViewSwitcher = () => {
                 ): (
                 <>
                     <TabsContent value="table" className="mt-0">
-                        <DataTable columns={columns} data={tasks?.documents ?? [] } />
+                        <DataTable columns={columns} data={tasks ?? []} />
                     </TabsContent>
                     <TabsContent value="kanban" className="mt-0">
                         {JSON.stringify(tasks)}

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { rpc } from "@/lib/rpc";
-import { TaskStatus } from "../types";
+import { Task, TaskStatus } from "../types";
 
 interface useGetTasksProps {
     workspaceId: string;
@@ -46,8 +46,12 @@ export const useGetTasks = ({
                 throw new Error("Failed to fetch tasks");
             }
 
-            const data = await response.json();
-            return data;
+            const raw = await response.json();
+
+            // TODO: Not best pratice, we wanna optimize this reponse and make it faster
+            const tasks: Task[] = raw.documents[0]?.documents ?? [];
+
+            return tasks;
         }
     });
 
