@@ -3,11 +3,13 @@
 import { ArrowUpDown } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 
+import { MemberAvatar } from "@/features/members/components/member-avatar";
+import { ProjectAvatar } from "@/features/projects/components/project-avatar";
+
 import { Button } from "@/components/ui/button";
 
 import { Task } from "../types";
-import { MemberAvatar } from "@/features/members/components/member-avatar";
-import { ProjectAvatar } from "@/features/projects/components/project-avatar";
+import { TaskDate } from "./task-date";
 
 export const columns: ColumnDef<Task>[] = [
   {
@@ -93,6 +95,29 @@ export const columns: ColumnDef<Task>[] = [
           <p className="line-clamp-1">{assignee.name}</p>
         </div>
       );
+    },
+  },
+  {
+    accessorKey: "dueDate",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Due Date
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const dueDate = row.original.dueDate;
+
+      if (!dueDate) {
+        return <span className="text-muted-foreground">No due date</span>;
+      }
+
+      return <TaskDate value={dueDate} />;
     },
   },
 ];
