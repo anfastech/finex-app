@@ -19,6 +19,13 @@ export function generateInviteCode(length: number) {
   return result;
 }
 
+export function snakeCaseToTitleCase(str: string) {
+  return str.toLowerCase()
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+// not mandatory
 export function suppressWarnings() {
   if (process.env.NODE_ENV === 'development') {
     const originalWarn = console.warn;
