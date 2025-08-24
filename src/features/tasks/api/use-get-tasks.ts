@@ -49,7 +49,7 @@ export const useGetTasks = ({
             const raw = await response.json();
 
             // TODO: Not best pratice, we wanna optimize this reponse and make it faster
-            const tasks: Task[] = raw.documents[0]?.documents ?? [];
+            const tasks: Task[] = raw.documents ?? [];
 
             return tasks;
         }

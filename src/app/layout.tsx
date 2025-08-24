@@ -6,6 +6,8 @@ import { QueryProvider } from "@/components/query-provider";
 
 import { cn } from "@/lib/utils";
 
+import { suppressWarnings } from "@/lib/utils";
+
 import "./globals.css";
 
 const inter = Inter({
@@ -23,11 +25,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  suppressWarnings();
+  console.log(" Started 🏁🏁🏁");
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(inter.className, "antialiased min-h-screen")}
-      >
+      <body className={cn(inter.className, "antialiased min-h-screen")}>
         <QueryProvider>
           <Toaster />
           {children}

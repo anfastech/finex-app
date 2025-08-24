@@ -109,6 +109,12 @@ const app = new Hono()
         })
       );
 
+      console.log("Raw tasks:", tasks.documents.map(t => ({ id: t.$id, projectId: t.projectId, assigneeId: t.assigneeId })));
+
+console.log("Projects:", projects.documents.map(p => ({ id: p.$id, name: p.name })));
+
+console.log("Assignees:", assignees.map(a => ({ id: a.$id, name: a.name })));
+
       const populatedTasks = tasks.documents.map((task) => {
         const project = projects.documents.find(
           (project) => project.$id === task.projectId
@@ -116,6 +122,9 @@ const app = new Hono()
         const assignee = assignees.find(
           (assignee) => assignee.$id === task.assigneeId
         );
+
+        console.log("Mapping task: 🏁🏁🏁", task.$id, { project, assignee });
+
 
         return {
           ...task,
