@@ -18,7 +18,8 @@ import { useGetTasks } from "../api/use-get-tasks";
 import { useTaskFilters } from "../hooks/use-task-filters";
 import { useCreateTaskModel } from "../hooks/use-create-task-modal";
 import { DataKanban } from "./data-kanban";
-import { useCallback } from "react";
+import { use, useCallback } from "react";
+import { useBulkUpdateTasks } from "../api/use-bulk-update-tasks";
 
 export const TaskViewSwitcher = () => {
     const [{
@@ -35,6 +36,8 @@ export const TaskViewSwitcher = () => {
     const workspaceId = useWorkspaceId();
     const { open } = useCreateTaskModel();
 
+    const { mutate: bulkUpdate } = useBulkUpdateTasks();
+
     const {
       data: tasks,
       isLoading: isLoadingTasks 
@@ -49,8 +52,10 @@ export const TaskViewSwitcher = () => {
     const onKanbanChange = useCallback((
         tasks: { $id: string; status: string; position: number }[]
     ) => {
-        console.log({ tasks });
-    }, [])
+        bulkUpdate({
+            json: { tasks },
+        });
+    }, [bulkUpdate])
 
     return (
         <Tabs
