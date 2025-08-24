@@ -18,6 +18,7 @@ import { useGetTasks } from "../api/use-get-tasks";
 import { useTaskFilters } from "../hooks/use-task-filters";
 import { useCreateTaskModel } from "../hooks/use-create-task-modal";
 import { DataKanban } from "./data-kanban";
+import { useCallback } from "react";
 
 export const TaskViewSwitcher = () => {
     const [{
@@ -44,6 +45,12 @@ export const TaskViewSwitcher = () => {
         status,
         dueDate,
     });
+
+    const onKanbanChange = useCallback((
+        tasks: { $id: string; status: string; position: number }[]
+    ) => {
+        console.log({ tasks });
+    }, [])
 
     return (
         <Tabs
@@ -95,7 +102,7 @@ export const TaskViewSwitcher = () => {
                         <DataTable columns={columns} data={tasks ?? []} />
                     </TabsContent>
                     <TabsContent value="kanban" className="mt-0">
-                        <DataKanban data={tasks ?? []} />
+                        <DataKanban onChange={onKanbanChange} data={tasks ?? []} />
                     </TabsContent>
                     <TabsContent value="calendar" className="mt-0">
                         {JSON.stringify(tasks)}
