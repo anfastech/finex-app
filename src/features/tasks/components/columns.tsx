@@ -144,17 +144,20 @@ export const columns: ColumnDef<Task>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const id = row.original.id;
+      const id = row.original.$id;
       const projectId = row.original.projectId;
 
+      // console.log(`🚩🚩🚩\n printing the row original \n 🏁 : ${JSON.stringify(row.original)} \n 🚩🚩`);
+      // console.log(`☑️☑️☑️\n printing the id \n 🏁 : ${id} \n ☑️☑️`);
+      // console.log(`✅✅✅\n printing the ProjectId \n 🏁 : ${projectId} \n ✅✅`);
+
       return (
-        <TaskActions taskId={id} projectId={projectId}>
+        <TaskActions id={id} projectId={projectId}>
           <Button variant="ghost" className="size-8 p-0">
             <MoreVertical className="size-4" />
           </Button>
         </TaskActions>
       );
-    }
+    },
   },
-
 ];

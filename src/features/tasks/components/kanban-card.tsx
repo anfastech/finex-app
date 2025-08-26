@@ -23,7 +23,6 @@ export const KanbanCard = ({ task }: KanbanCardProps) => {
         <div className="flex items-center gap-x-1.5">
             <MemberAvatar
                 name={task.assignee.name}
-
             />
             <div className="size-1 rounded-full bg-neutral-300" />
             <TaskDate value={task.dueDate} className="text-xs" />
