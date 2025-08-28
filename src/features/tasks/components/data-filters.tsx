@@ -82,6 +82,7 @@ export const DataFilters = ({ hideProjectFilter }: DataFiltersProps) => {
                     <SelectItem value={TaskStatus.DONE}>Done</SelectItem>
                 </SelectContent>
             </Select>
+            
             <Select
                 defaultValue={assigneeId ?? undefined}
                 onValueChange={(value) => onAssigneeChange(value)}

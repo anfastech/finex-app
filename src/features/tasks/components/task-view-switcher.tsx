@@ -22,7 +22,11 @@ import { useTaskFilters } from "../hooks/use-task-filters";
 import { useCreateTaskModel } from "../hooks/use-create-task-modal";
 import { useBulkUpdateTasks } from "../api/use-bulk-update-tasks";
 
-export const TaskViewSwitcher = () => {
+interface TaskViewSwitcherProps {
+    hideProjectFilter?: boolean;
+};
+
+export const TaskViewSwitcher = ({ hideProjectFilter }: TaskViewSwitcherProps) => {
     const [{
         status,
         assigneeId,
@@ -97,7 +101,7 @@ export const TaskViewSwitcher = () => {
                     </Button>
                 </div>
                 <DottedSeparator className="my-4" />
-                    <DataFilters />
+                    <DataFilters hideProjectFilter={hideProjectFilter} />
                 <DottedSeparator className="my-4" />
                 {isLoadingTasks ? (
                     <div className="w-full border rounded-lg h-[200px] flex flex-col items-center justify-center">
