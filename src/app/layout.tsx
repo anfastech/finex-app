@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   suppressWarnings();
-  console.log(" Started 🏁🏁🏁");
+  // console.log(" Started 🏁🏁🏁");
 
   return (
     <html lang="en" suppressHydrationWarning>

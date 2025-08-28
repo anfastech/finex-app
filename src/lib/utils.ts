@@ -28,16 +28,16 @@ export function snakeCaseToTitleCase(str: string) {
 // not mandatory
 export function suppressWarnings() {
   if (process.env.NODE_ENV === 'development') {
-    const originalWarn = console.warn;
-    console.warn = function (...args) {
-      if (
-        args[0]?.includes?.('React DevTools') ||
-        args[0]?.includes?.('Image with src') ||
-        args[0]?.includes?.('params should be awaited')
-      ) {
-        return;
-      }
-      originalWarn.apply(console, args);
-    };
+    // const originalWarn = console.warn;
+    // console.warn = function (...args) {
+    //   if (
+    //     args[0]?.includes?.('React DevTools') ||
+    //     args[0]?.includes?.('Image with src') ||
+    //     args[0]?.includes?.('params should be awaited')
+    //   ) {
+    //     return;
+    //   }
+    //   originalWarn.apply(console, args);
+    // };
   }
 }

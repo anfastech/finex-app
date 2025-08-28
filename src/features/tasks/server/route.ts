@@ -14,42 +14,34 @@ import { Task, TaskStatus } from "../types";
 import { createTaskSchema } from "../schemas";
 
 const app = new Hono()
-  .delete(
-    "/:taskId",
-    sessionMiddleware,
-    async (c) => {
-      const user = c.get("user");
-      const databases = c.get("database");
+  .delete("/:taskId", sessionMiddleware, async (c) => {
+    const user = c.get("user");
+    const databases = c.get("database");
 
-      const { taskId } = c.req.param();
+    const { taskId } = c.req.param();
 
-      const task = await databases.getDocument<Task>(
-        DATABASE_ID,
-        TASKS_ID,
-        taskId,
-      );
+    const task = await databases.getDocument<Task>(
+      DATABASE_ID,
+      TASKS_ID,
+      taskId
+    );
 
-      console.log("🏁🏁 \n 🏁🏁 Task to delete: \n 🏁", task);
+    // console.log("🏁🏁 \n 🏁🏁 Task to delete: \n 🏁", task);
 
-      const member = await getMember({
-        databases,
-        workspaceId: task.workspaceId,
-        userId: user.$id,
-      });
+    const member = await getMember({
+      databases,
+      workspaceId: task.workspaceId,
+      userId: user.$id,
+    });
 
-      if (!member) {
-        return c.json({ error: "Unauthorized" }, 401);
-      }
-
-      await databases.deleteDocument(
-        DATABASE_ID,
-        TASKS_ID,
-        taskId,
-      );
-
-      return c.json({ data: { $id: task.$id } }); 
+    if (!member) {
+      return c.json({ error: "Unauthorized" }, 401);
     }
-  )
+
+    await databases.deleteDocument(DATABASE_ID, TASKS_ID, taskId);
+
+    return c.json({ data: { $id: task.$id } });
+  })
   .get(
     "/",
     sessionMiddleware,
@@ -94,27 +86,27 @@ const app = new Hono()
       ];
 
       if (projectId) {
-        console.log("projectId: ", projectId);
+        // console.log("projectId: ", projectId);
         query.push(Query.equal("projectId", projectId));
       }
 
       if (status) {
-        console.log("status: ", status);
+        // console.log("status: ", status);
         query.push(Query.equal("status", status));
       }
 
       if (assigneeId) {
-        console.log("assigneeId: ", assigneeId);
+        // console.log("assigneeId: ", assigneeId);
         query.push(Query.equal("assigneeId", assigneeId));
       }
 
       if (dueDate) {
-        console.log("dueDate: ", dueDate);
+        // console.log("dueDate: ", dueDate);
         query.push(Query.equal("dueDate", dueDate));
       }
 
       if (search) {
-        console.log("search: ", search);
+        // console.log("search: ", search);
         query.push(Query.search("name", search));
       }
 
@@ -151,11 +143,11 @@ const app = new Hono()
         })
       );
 
-      console.log("Raw tasks:", tasks.documents.map(t => ({ id: t.$id, projectId: t.projectId, assigneeId: t.assigneeId })));
+      // console.log("Raw tasks:", tasks.documents.map(t => ({ id: t.$id, projectId: t.projectId, assigneeId: t.assigneeId })));
 
-console.log("Projects:", projects.documents.map(p => ({ id: p.$id, name: p.name })));
+      // console.log("Projects:", projects.documents.map(p => ({ id: p.$id, name: p.name })));
 
-console.log("Assignees:", assignees.map(a => ({ id: a.$id, name: a.name })));
+      // console.log("Assignees:", assignees.map(a => ({ id: a.$id, name: a.name })));
 
       const populatedTasks = tasks.documents.map((task) => {
         const project = projects.documents.find(
@@ -165,8 +157,7 @@ console.log("Assignees:", assignees.map(a => ({ id: a.$id, name: a.name })));
           (assignee) => assignee.$id === task.assigneeId
         );
 
-        console.log("Mapping task: 🏁🏁🏁", task.$id, { project, assignee });
-
+        // console.log("Mapping task: 🏁🏁🏁", task.$id, { project, assignee });
 
         return {
           ...task,
@@ -250,7 +241,7 @@ console.log("Assignees:", assignees.map(a => ({ id: a.$id, name: a.name })));
       const existingTask = await databases.getDocument<Task>(
         DATABASE_ID,
         TASKS_ID,
-        taskId,
+        taskId
       );
 
       const member = await getMember({
@@ -280,61 +271,56 @@ console.log("Assignees:", assignees.map(a => ({ id: a.$id, name: a.name })));
       return c.json({ data: task });
     }
   )
-  .get(
-    "/:taskId",
-    sessionMiddleware,
-    async (c) => {
-      const currentUser = c.get("user");
-      const databases = c.get("database");
-      const { users } = await createAdminClient();
-      const { taskId } = c.req.param();
+  .get("/:taskId", sessionMiddleware, async (c) => {
+    const currentUser = c.get("user");
+    const databases = c.get("database");
+    const { users } = await createAdminClient();
+    const { taskId } = c.req.param();
 
-      const task = await databases.getDocument<Task>(
-        DATABASE_ID,
-        TASKS_ID,
-        taskId,
-      );
+    const task = await databases.getDocument<Task>(
+      DATABASE_ID,
+      TASKS_ID,
+      taskId
+    );
 
-      const currentMember = await getMember({
-        databases,
-        workspaceId: task.workspaceId,
-        userId: currentUser.$id
-      });
+    const currentMember = await getMember({
+      databases,
+      workspaceId: task.workspaceId,
+      userId: currentUser.$id,
+    });
 
-      if (!currentMember) {
-        return c.json({ error: "Unauthorized" }, 401);
-      }
-
-      const project = await databases.getDocument<Project>(
-        DATABASE_ID,
-        PROJECTS_ID,
-        task.projectId
-      );
-
-      const member = await databases.getDocument(
-        DATABASE_ID,
-        MEMBERS_ID,
-        task.assigneeId
-      );
-
-      const user = await users.get(member.userId);
-
-      const assignee = {
-        ...member,
-        name: user.name,
-        email: user.email,
-      }
-
-      return c.json({
-        data: {
-          ...task,
-          project,
-          assignee,
-        }
-      });
-
+    if (!currentMember) {
+      return c.json({ error: "Unauthorized" }, 401);
     }
-  )
+
+    const project = await databases.getDocument<Project>(
+      DATABASE_ID,
+      PROJECTS_ID,
+      task.projectId
+    );
+
+    const member = await databases.getDocument(
+      DATABASE_ID,
+      MEMBERS_ID,
+      task.assigneeId
+    );
+
+    const user = await users.get(member.userId);
+
+    const assignee = {
+      ...member,
+      name: user.name,
+      email: user.email,
+    };
+
+    return c.json({
+      data: {
+        ...task,
+        project,
+        assignee,
+      },
+    });
+  })
   .post(
     "/bulk-update",
     sessionMiddleware,
@@ -347,7 +333,7 @@ console.log("Assignees:", assignees.map(a => ({ id: a.$id, name: a.name })));
             status: z.nativeEnum(TaskStatus),
             position: z.number().int().positive().min(1000).max(1_000_000),
           })
-        )
+        ),
       })
     ),
     async (c) => {
@@ -358,10 +344,17 @@ console.log("Assignees:", assignees.map(a => ({ id: a.$id, name: a.name })));
       const tasksToUpdate = await databases.listDocuments<Task>(
         DATABASE_ID,
         TASKS_ID,
-        [Query.contains("$id", tasks.map((task) => task.$id))]
+        [
+          Query.contains(
+            "$id",
+            tasks.map((task) => task.$id)
+          ),
+        ]
       );
 
-      const workspaceIds = new Set(tasksToUpdate.documents.map(task => task.workspaceId));
+      const workspaceIds = new Set(
+        tasksToUpdate.documents.map((task) => task.workspaceId)
+      );
 
       if (workspaceIds.size !== 1) {
         return c.json({ error: "All tasks must belong to the same workspace" });
@@ -382,15 +375,10 @@ console.log("Assignees:", assignees.map(a => ({ id: a.$id, name: a.name })));
       const updatedTasks = await Promise.all(
         tasks.map(async (task) => {
           const { $id, status, position } = task;
-          return databases.updateDocument<Task>(
-            DATABASE_ID,
-            TASKS_ID,
-            $id,
-            {
-              status,
-              position
-            }
-          );
+          return databases.updateDocument<Task>(DATABASE_ID, TASKS_ID, $id, {
+            status,
+            position,
+          });
         })
       );
 

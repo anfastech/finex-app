@@ -1,0 +1,53 @@
+.rbc-month-row {
+    min-height: 180px;
+    border-top: 1px solid #e5e7eb;
+    border-left: 1px solid #e5e7eb;
+    border-right: 1px solid #e5e7eb;
+}
+
+.rbc-header {
+    font-size: 0.875rem;
+    font-weight: 400;
+    padding-bottom: 1rem;
+    color: #6b7280;
+    border-bottom: 0;
+}
+
+.rbc-header + .rbc-header {
+    border-left: 0;
+}
+
+.rbc-button-link {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #6b7280;
+}
+
+:not(.rbc-month-row ~ .rbc-month-row).rbc-month-row {
+    border-top-left-radius: 0.55rem;
+    border-top-right-radius: 0.55rem;
+}
+
+.rbc-month-row:last-of-type {
+    border-bottom: 1px solid #e5e7eb;
+    border-bottom-left-radius: 0.55rem;
+    border-bottom-right-radius: 0.55rem;
+}
+
+.rbc-month-view {
+    border: none;
+}
+
+.rbc-date-cell {
+    padding: 0.5rem;
+    border-top: 1px solid #e5e7eb;
+    border-left: 1px solid #e5e7eb;
+}
+
+.rbc-today {
+    /* background: inherit; */
+}
+
+.rbc-off-range-bg {
+    background: #ededf0;
+}
