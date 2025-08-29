@@ -4,7 +4,7 @@
 import { Query } from "node-appwrite";
 
 import { getMember } from "../members/utils";
-import { DATABASE_ID, MEMBERS_ID, WORKSPACE_ID } from "@/config";
+import { DATABASE_ID, MEMBERS_ID, WORKSPACES_ID } from "@/config";
 
 import { Workspace } from "./types";
 import { createSessionClient } from "@/lib/appwrite";
@@ -29,7 +29,7 @@ export const getWorkspaces = async () => {
 
     const workspaces = await databases.listDocuments(
       DATABASE_ID,
-      WORKSPACE_ID,
+      WORKSPACES_ID,
       [
         Query.orderDesc("$createdAt"),
         Query.contains("$id", workspaceIds),
@@ -61,7 +61,7 @@ export const getWorkspace = async ({ workspaceId }: GetWorkspaceProps) => {
 
   const workspace = await databases.getDocument<Workspace>(
     DATABASE_ID,
-    WORKSPACE_ID,
+    WORKSPACES_ID,
     workspaceId
   );
 
@@ -79,7 +79,7 @@ export const getWorkspaceInfo = async ({ workspaceId }: GetWorkspaceInfoProps) =
 
   const workspace = await databases.getDocument<Workspace>(
     DATABASE_ID,
-    WORKSPACE_ID,
+    WORKSPACES_ID,
     workspaceId
   );
 

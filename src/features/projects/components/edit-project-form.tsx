@@ -42,8 +42,7 @@ export const EditProjectForm = ({
 }: EditProjectFormProps) => {
   const router = useRouter();
   const { mutate, isPending } = useUpdateProject();
-  const { mutate: deleteProject, isPending: isDeletingProject } =
-    useDeleteProject();
+  const { mutate: deleteProject } = useDeleteProject();
 
   const [DeleteDialog, confirmDelete] = useConfirm(
     "Delete Project",
@@ -89,11 +88,6 @@ export const EditProjectForm = ({
       {
         form: finalValues,
         param: { projectId: initialValues.$id },
-      },
-      {
-        onSuccess: () => {
-          form.reset();
-        },
       }
     );
   };
@@ -227,7 +221,10 @@ export const EditProjectForm = ({
                 >
                   Cancel
                 </Button>
-                <Button type="submit" size="lg" disabled={isPending}>
+                <Button
+                  type="submit"
+                  size="lg"
+                >
                   Save Changes
                 </Button>
               </div>

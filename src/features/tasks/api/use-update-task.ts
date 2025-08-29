@@ -32,7 +32,6 @@ export const useUpdateTask = () => {
 
             router.refresh();
             queryClient.invalidateQueries({ queryKey: ["tasks"] });
-            // queryClient.setQueryData(["tasks", data.$id], data);
             queryClient.invalidateQueries({ queryKey: ["task", data.$id] });
         },
         onError: () => {

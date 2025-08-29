@@ -8,7 +8,7 @@ import { MemberRole } from "@/features/members/types";
 
 import { generateInviteCode } from "@/lib/utils";
 import { sessionMiddleware } from "@/lib/session-middleware";
-import { DATABASE_ID, IMAGE_BUCKET_ID, MEMBERS_ID, WORKSPACE_ID } from "@/config";
+import { DATABASE_ID, IMAGE_BUCKET_ID, MEMBERS_ID, WORKSPACES_ID } from "@/config";
 
 import { createWorkspaceSchema, updateWorkspaceSchema } from "../schemas";
 import { Workspace } from "../types";
@@ -42,6 +42,56 @@ const app = new Hono()
       return c.json({ error: "File not found" }, 404);
     }
   })
+  .get(
+    "/:workspaceId",
+    sessionMiddleware,
+    async (c) => {
+      const user = c.get("user");
+      const databases = c.get("database");
+      const { workspaceId } = c.req.param();
+
+      const member = await getMember({
+        databases,
+        workspaceId,
+        userId: user.$id,
+      });
+
+      if (!member) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const workspace = await databases.getDocument<Workspace>(
+        DATABASE_ID,
+        WORKSPACES_ID,
+        workspaceId,
+      );
+
+      return c.json({ data: workspace });
+    }
+  )
+  .get(
+    "/:workspaceId/info",
+    sessionMiddleware,
+    async (c) => {
+      const databases = c.get("database");
+      const { workspaceId } = c.req.param();
+
+
+      const workspace = await databases.getDocument<Workspace>(
+        DATABASE_ID,
+        WORKSPACES_ID,
+        workspaceId,
+      );
+
+      return c.json({ 
+        data: {
+          $id: workspace.$id,
+          name: workspace.name,
+          imageUrl: workspace.imageUrl,
+        }
+      });
+    }
+  )
   .get("/", sessionMiddleware, async (c) => {
     const user = c.get("user");
     const databases = c.get("database");
@@ -62,7 +112,7 @@ const app = new Hono()
 
     const workspaces = await databases.listDocuments(
       DATABASE_ID,
-      WORKSPACE_ID,
+      WORKSPACES_ID,
       [
         Query.orderDesc("$createdAt"),
         Query.contains("$id", workspaceIds),
@@ -105,7 +155,7 @@ const app = new Hono()
       // Create the workspace document in the database
       const workspace = await database.createDocument(
         DATABASE_ID,
-        WORKSPACE_ID,
+        WORKSPACES_ID,
         ID.unique(), // Generate unique workspace ID
         {
           name,
@@ -174,7 +224,7 @@ const app = new Hono()
 
       const workspace = await databases.updateDocument(
         DATABASE_ID,
-        WORKSPACE_ID,
+        WORKSPACES_ID,
         workspaceId,
         {
           name,
@@ -209,7 +259,7 @@ const app = new Hono()
 
       await databases.deleteDocument(
         DATABASE_ID,
-        WORKSPACE_ID,
+        WORKSPACES_ID,
         workspaceId
       );
 
@@ -236,7 +286,7 @@ const app = new Hono()
 
       const workspace =await databases.updateDocument(
         DATABASE_ID,
-        WORKSPACE_ID,
+        WORKSPACES_ID,
         workspaceId,
         {
           inviteCode: generateInviteCode(6),
@@ -269,7 +319,7 @@ const app = new Hono()
 
       const workspace = await databases.getDocument<Workspace>(
         DATABASE_ID,
-        WORKSPACE_ID,
+        WORKSPACES_ID,
         workspaceId
       );
 
