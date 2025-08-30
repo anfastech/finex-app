@@ -12,6 +12,5 @@ export default async function Home() {
     redirect("/workspaces/create");
   } else {
     redirect(`/workspaces/${workspaces.documents[0].$id}`);
-  }
-  
-}
+  } 
+};
