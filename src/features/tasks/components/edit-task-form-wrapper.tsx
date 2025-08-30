@@ -21,7 +21,7 @@ export const EditTaskFormWrapper = ({
 }: EditTaskFormWrapperProps) => {
     const workspaceId = useWorkspaceId();
 
-    const { data: initialValues, isLoading, isLoadingTask } = useGetTask({ taskId: id });
+    const { data: initialValues, isLoading } = useGetTask({ taskId: id });
 
     const { data: projects, isLoading: isLoadingProjects } = useGetProjects({ workspaceId });
     const { data: members, isLoading: isLoadingMembers } = useGetMembers({ workspaceId });
@@ -37,7 +37,7 @@ export const EditTaskFormWrapper = ({
         name: project.name,
     }));
 
-    const loading = isLoading || isLoadingProjects || isLoadingMembers || isLoadingTask;
+    const loading = isLoading || isLoadingProjects || isLoadingMembers;
 
     if (loading) {
         return (

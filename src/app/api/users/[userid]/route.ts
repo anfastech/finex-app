@@ -1,6 +1,14 @@
-export function GET(
-    req: Request,
-    { params }: { params: { userId: string } }
+// export function GET(
+//     req: Request,
+//     { params }: { params: { userId: string } }
+// ) {
+//     return Response.json({ userID: params.userId });
+// }
+
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ userId: string }> }
 ) {
-    return Response.json({ userID: params.userId });
+  const { userId } = await params
+  return Response.json({ userId })
 }

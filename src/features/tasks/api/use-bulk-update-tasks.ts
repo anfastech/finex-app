@@ -4,37 +4,44 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { rpc } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<typeof rpc.api.tasks["bulk-update"]["$post"], 200>;
-type RequestType = InferRequestType<typeof rpc.api.tasks["bulk-update"]["$post"]>;
-
+type ResponseType = InferResponseType<
+  (typeof rpc.api.tasks)["bulk-update"]["$post"],
+  200
+>;
+type RequestType = InferRequestType<
+  (typeof rpc.api.tasks)["bulk-update"]["$post"]
+>;
 
 export const useBulkUpdateTasks = () => {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-    const mutation = useMutation<
-        ResponseType,
-        Error,
-        RequestType
-    >({
-        mutationFn: async ({ json }) => {
-            const response = await rpc.api.tasks["bulk-update"]["$post"]({ json });
+  const mutation = useMutation<ResponseType, Error, RequestType>({
+    mutationFn: async ({ json }) => {
+      const response = await rpc.api.tasks["bulk-update"]["$post"]({ json });
 
-            if (!response.ok) {
-                throw new Error("Failed to update tasks");
-            }
+      if (!response.ok) {
+        throw new Error("Failed to update tasks");
+      }
 
-            return await response.json();
-        },
-        onSuccess: () => {
-            toast.success("Tasks updated");
+      return await response.json();
+    },
+    onSuccess: (res) => {
+      if ("data" in res) {
+        toast.success("Tasks updated");
 
-            queryClient.invalidateQueries({ queryKey: ["tasks"] });
-            queryClient.setQueryData(["tasks", data.$id], data);
-        },
-        onError: () => {
-            toast.error("Failed to update tasks");
-        }
-    })
+        queryClient.invalidateQueries({ queryKey: ["tasks"] });
 
-    return mutation;
+        res.data.forEach((task: { $id: string }) => {
+          queryClient.setQueryData(["tasks", task.$id], task);
+        });
+      } else {
+        toast.error(res.error ?? "Failed to update tasks");
+      }
+    },
+    onError: () => {
+      toast.error("Failed to update tasks");
+    },
+  });
+
+  return mutation;
 };

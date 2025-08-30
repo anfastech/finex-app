@@ -50,10 +50,13 @@ export const EditTaskForm = ({
 }: EditTaskFormProps) => {
   const { mutate, isPending } = useUpdateTask();
 
-  const form = useForm<z.infer<typeof createTaskSchema>>({
-    resolver: zodResolver(
-      createTaskSchema.omit({ workspaceId: true, description: true })
-    ),
+  const schema = createTaskSchema.omit({
+    workspaceId: true,
+    description: true,
+  });
+
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
     defaultValues: {
       ...initialValues,
       dueDate: initialValues.dueDate
@@ -62,7 +65,7 @@ export const EditTaskForm = ({
     },
   });
 
-  const onSubmit = (values: z.infer<typeof createTaskSchema>) => {
+  const onSubmit = (values: z.infer<typeof schema>) => {
     mutate(
       { json: values, param: { taskId: initialValues.$id } },
       {
