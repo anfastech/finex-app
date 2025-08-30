@@ -1,6 +1,7 @@
-export function GET(
+export async function GET(
     req: Request,
-    { params }: { params: { userid: string } }
-) {
-    return Response.json({userID: params.userid});
+    context: { params: Record<string, string> }
+): Promise<Response> {
+    const { userid } = context.params;
+    return Response.json({userID: userid});
 }
